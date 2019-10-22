@@ -1,5 +1,10 @@
 #!/bin/sh
 #to run the script type 
+#first
+#wget -O - https://raw.githubusercontent.com/ImmLearning/MediaWikiAWSCiCd/master/InstallMediaWikiEC2AWS.sh | bash
+#second
+#wget -O - hhttps://raw.githubusercontent.com/ImmLearning/MediaWikiAWSCiCd/master/secondscript.sh | bash
+
 chkconfig httpd on
 chkconfig mysqld on
 cd /home/username
