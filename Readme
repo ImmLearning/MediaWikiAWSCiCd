@@ -1,0 +1,8 @@
+After creating AWS infra using Cloud formation
+access the EC2 instance and run these scripts
+
+To run the script type 
+First
+#wget -O - https://raw.githubusercontent.com/ImmLearning/MediaWikiAWSCiCd/master/InstallMediaWikiEC2AWS.sh | bash
+Second
+#wget -O - hhttps://raw.githubusercontent.com/ImmLearning/MediaWikiAWSCiCd/master/secondscript.sh | bash
