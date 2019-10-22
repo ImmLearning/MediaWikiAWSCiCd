@@ -1,0 +1,581 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "AWS EC2 (Virtual Machine) setup",
+	"Parameters": {
+		"VpcId": {
+			"Description": "Select your VPC Id.",
+			"Type": "AWS::EC2::VPC::Id",
+			"Default": ""
+		},
+		"SubnetId1": {
+			"Description": "Select your Subnet Id.",
+			"Type": "AWS::EC2::Subnet::Id",
+			"Default": ""
+		},
+		"SecurityGroupName1": {
+			"Description": "Enter your SecurityGroup Name.",
+			"Type": "String",
+			"Default": ""
+		},
+		"SubnetId2": {
+			"Description": "Select your Subnet Id.",
+			"Type": "AWS::EC2::Subnet::Id",
+			"Default": ""
+		},
+		"SecurityGroupName2": {
+			"Description": "Enter your SecurityGroup Name.",
+			"Type": "String",
+			"Default": ""
+		},
+		"Appname": {
+			"Description": "Enter your SecurityGroup App Name.",
+			"Type": "String",
+			"Default": ""
+		},
+		"Environment": {
+			"Description": "Enter your environment Name.",
+			"Type": "String",
+			"Default": ""
+		},
+		"Businessunit": {
+			"Description": "Enter your businessunit Name.",
+			"Type": "String",
+			"Default": "default"
+		},
+		"Remarks1": {
+			"Description": "Enter your remark about port.",
+			"Type": "String",
+			"Default": ""
+		},
+		"ServerName1": {
+			"Description": "Enter your server Name.",
+			"Type": "String",
+			"Default": ""
+		},
+		"ServerName2": {
+			"Description": "Enter your server Name.",
+			"Type": "String",
+			"Default": ""
+		},
+		"Backup": {
+			"Description": "Enter your backup rule.",
+			"Type": "String",
+			"Default": "yes:f=1d:r=7d"
+		},
+		"Ownername": {
+			"Description": "Enter the ownername name.",
+			"Type": "String",
+			"Default": ""
+		},
+		"Role": {
+			"Description": "Enter the role name.",
+			"Type": "String",
+			"Default": ""
+		},
+		"Starttime": {
+			"Description": "Enter the starttime.",
+			"Type": "String",
+			"Default": "na"
+		},
+		"Stoptime": {
+			"Description": "Enter the stoptime.",
+			"Type": "String",
+			"Default": "na"
+		},
+		"Project": {
+			"Description": "Enter the project Name.",
+			"Type": "String",
+			"Default": ""
+		},
+		"InstanceType1": {
+			"Type": "String",
+			"Default": "",
+			"Description": "Enter your instance type."
+		},
+		"InstanceType2": {
+			"Type": "String",
+			"Default": "",
+			"Description": "Enter your instance type."
+		},
+		"AMIImageId1": {
+			"Type": "AWS::EC2::Image::Id",
+			"Default": "",
+			"Description": "Please select your AMI Id"
+		},
+		"AMIImageId2": {
+			"Type": "AWS::EC2::Image::Id",
+			"Default": "",
+			"Description": "Please select your AMI Id"
+		},
+		"ServerKeyName": {
+			"Description": "Name of an existing EC2 KeyPair to Prod Server",
+			"Type": "AWS::EC2::KeyPair::KeyName",
+			"ConstraintDescription": "Must be the name of an existing EC2 KeyPair."
+		}
+	},
+	"Resources": {
+		"InstanceRole1": {
+			"Type": "AWS::IAM::InstanceProfile",
+			"Properties": {
+				"Path": "/",
+				"Roles": ["EDU-APP-EC2-ROLE"]
+			}
+		},
+		"ServerSecurityGroup1": {
+			"Type": "AWS::EC2::SecurityGroup",
+			"Properties": {
+				"GroupDescription": "Server Security Group",
+				"VpcId": {
+					"Ref": "VpcId"
+				},
+				"SecurityGroupIngress": [{
+						"CidrIp": "0.0.0.0/0",
+						"FromPort": 80,
+						"IpProtocol": "tcp",
+						"ToPort": 80
+					},
+					{
+						"CidrIp": "0.0.0.0/0",
+						"FromPort": 9002,
+						"IpProtocol": "tcp",
+						"ToPort": 9002
+					},
+					{
+						"CidrIp": "0.0.0.0/0",
+						"FromPort": 443,
+						"IpProtocol": "tcp",
+						"ToPort": 443
+					},
+					{
+						"CidrIp": "172.21.0.0/16",
+						"IpProtocol": -1
+					},
+					{
+						"CidrIp": "172.32.0.0/16",
+						"IpProtocol": -1
+					},
+					{
+						"CidrIp": "172.32.0.0/16",
+						"FromPort": -1,
+						"IpProtocol": "icmp",
+						"ToPort": -1
+					},
+					{
+						"CidrIp": "172.21.0.0/16",
+						"FromPort": -1,
+						"IpProtocol": "icmp",
+						"ToPort": -1
+					},
+					{
+						"CidrIp": "119.252.192.0/19",
+						"FromPort": 22,
+						"IpProtocol": "tcp",
+						"ToPort": 22
+					},
+					{
+						"CidrIp": "119.42.59.144/32",
+						"FromPort": 22,
+						"IpProtocol": "tcp",
+						"ToPort": 22
+					},
+					{
+						"CidrIp": "103.211.19.44/32",
+						"FromPort": 22,
+						"IpProtocol": "tcp",
+						"ToPort": 22
+					}
+				],
+				"SecurityGroupEgress": [{
+					"IpProtocol": "-1",
+					"CidrIp": "0.0.0.0/0"
+				}],
+				"Tags": [{
+						"Key": "Name",
+						"Value": {
+							"Ref": "SecurityGroupName1"
+						}
+					},
+					{
+						"Key": "appname",
+						"Value": {
+							"Ref": "Appname"
+						}
+					},
+					{
+						"Key": "businessunit",
+						"Value": {
+							"Ref": "Businessunit"
+						}
+					},
+					{
+						"Key": "environment",
+						"Value": {
+							"Ref": "Environment"
+						}
+					},
+					{
+						"Key": "remarks",
+						"Value": {
+							"Ref": "Remarks1"
+						}
+					}
+				]
+			}
+		},
+		"Ec2Instance1": {
+			"Type": "AWS::EC2::Instance",
+			"DependsOn": [
+				"ServerSecurityGroup1"
+			],
+			"Properties": {
+				"DisableApiTermination": "false",
+				"InstanceInitiatedShutdownBehavior": "stop",
+				"IamInstanceProfile": {
+					"Ref": "InstanceRole1"
+				},
+				"ImageId": {
+					"Ref": "AMIImageId1"
+				},
+				"InstanceType": {
+					"Ref": "InstanceType1"
+				},
+				"KeyName": {
+					"Ref": "ServerKeyName"
+				},
+				"Monitoring": "false",
+				"Tags": [{
+						"Key": "Name",
+						"Value": {
+							"Ref": "ServerName1"
+						}
+					},
+					{
+						"Key": "backup",
+						"Value": {
+							"Ref": "Backup"
+						}
+					},
+					{
+						"Key": "appname",
+						"Value": {
+							"Ref": "Appname"
+						}
+					},
+					{
+						"Key": "businessunit",
+						"Value": {
+							"Ref": "Businessunit"
+						}
+					},
+					{
+						"Key": "environment",
+						"Value": {
+							"Ref": "Environment"
+						}
+					},
+					{
+						"Key": "ownername",
+						"Value": {
+							"Ref": "Ownername"
+						}
+					},
+					{
+						"Key": "backup-retention",
+						"Value": 7
+					},
+					{
+						"Key": "Backup",
+						"Value": "Yes"
+					},
+					{
+						"Key": "role",
+						"Value": {
+							"Ref": "Role"
+						}
+					},
+					{
+						"Key": "starttime",
+						"Value": {
+							"Ref": "Starttime"
+						}
+					},
+					{
+						"Key": "stoptime",
+						"Value": {
+							"Ref": "Stoptime"
+						}
+					},
+					{
+						"Key": "Project",
+						"Value": {
+							"Ref": "Project"
+						}
+					}
+				],
+				"NetworkInterfaces": [{
+					"DeleteOnTermination": "true",
+					"Description": "Primary network interface",
+					"DeviceIndex": 0,
+					"SubnetId": {
+						"Ref": "SubnetId1"
+					},
+					"GroupSet": [{
+						"Ref": "ServerSecurityGroup1"
+					}]
+				}]
+			}
+		},
+		"ServerSecurityGroup2": {
+			"Type": "AWS::EC2::SecurityGroup",
+			"Properties": {
+				"GroupDescription": "Server Security Group",
+				"VpcId": {
+					"Ref": "VpcId"
+				},
+				"SecurityGroupIngress": [{
+						"CidrIp": "0.0.0.0/0",
+						"FromPort": 80,
+						"IpProtocol": "tcp",
+						"ToPort": 80
+					},
+					{
+						"CidrIp": "0.0.0.0/0",
+						"FromPort": 9002,
+						"IpProtocol": "tcp",
+						"ToPort": 9002
+					},
+					{
+						"CidrIp": "0.0.0.0/0",
+						"FromPort": 443,
+						"IpProtocol": "tcp",
+						"ToPort": 443
+					},
+					{
+						"CidrIp": "172.21.0.0/16",
+						"IpProtocol": -1
+					},
+					{
+						"CidrIp": "172.32.0.0/16",
+						"IpProtocol": -1
+					},
+					{
+						"CidrIp": "172.32.0.0/16",
+						"FromPort": -1,
+						"IpProtocol": "icmp",
+						"ToPort": -1
+					},
+					{
+						"CidrIp": "172.21.0.0/16",
+						"FromPort": -1,
+						"IpProtocol": "icmp",
+						"ToPort": -1
+					},
+					{
+						"CidrIp": "119.252.192.0/19",
+						"FromPort": 22,
+						"IpProtocol": "tcp",
+						"ToPort": 22
+					},
+					{
+						"CidrIp": "119.252.192.0/19",
+						"FromPort": 8080,
+						"IpProtocol": "tcp",
+						"ToPort": 8080
+					},
+					{
+						"CidrIp": "119.42.59.144/32",
+						"FromPort": 22,
+						"IpProtocol": "tcp",
+						"ToPort": 22
+					},
+					{
+						"CidrIp": "103.211.19.44/32",
+						"FromPort": 22,
+						"IpProtocol": "tcp",
+						"ToPort": 22
+					}
+				],
+				"SecurityGroupEgress": [{
+					"IpProtocol": "-1",
+					"CidrIp": "0.0.0.0/0"
+				}],
+				"Tags": [{
+						"Key": "Name",
+						"Value": {
+							"Ref": "SecurityGroupName2"
+						}
+					},
+					{
+						"Key": "appname",
+						"Value": {
+							"Ref": "Appname"
+						}
+					},
+					{
+						"Key": "businessunit",
+						"Value": {
+							"Ref": "Businessunit"
+						}
+					},
+					{
+						"Key": "environment",
+						"Value": {
+							"Ref": "Environment"
+						}
+					},
+					{
+						"Key": "remarks",
+						"Value": {
+							"Ref": "Remarks1"
+						}
+					}
+				]
+			}
+		},
+		"Ec2Instance2": {
+			"Type": "AWS::EC2::Instance",
+			"DependsOn": [
+				"ServerSecurityGroup2"
+			],
+			"Properties": {
+				"DisableApiTermination": "false",
+				"InstanceInitiatedShutdownBehavior": "stop",
+				"IamInstanceProfile": {
+					"Ref": "InstanceRole1"
+				},
+				"ImageId": {
+					"Ref": "AMIImageId2"
+				},
+				"InstanceType": {
+					"Ref": "InstanceType2"
+				},
+				"KeyName": {
+					"Ref": "ServerKeyName"
+				},
+				"Monitoring": "false",
+				"Tags": [{
+						"Key": "Name",
+						"Value": {
+							"Ref": "ServerName2"
+						}
+					},
+					{
+						"Key": "backup",
+						"Value": {
+							"Ref": "Backup"
+						}
+					},
+					{
+						"Key": "appname",
+						"Value": {
+							"Ref": "Appname"
+						}
+					},
+					{
+						"Key": "businessunit",
+						"Value": {
+							"Ref": "Businessunit"
+						}
+					},
+					{
+						"Key": "environment",
+						"Value": {
+							"Ref": "Environment"
+						}
+					},
+					{
+						"Key": "ownername",
+						"Value": {
+							"Ref": "Ownername"
+						}
+					},
+					{
+						"Key": "backup-retention",
+						"Value": 7
+					},
+					{
+						"Key": "Backup",
+						"Value": "Yes"
+					},
+					{
+						"Key": "role",
+						"Value": {
+							"Ref": "Role"
+						}
+					},
+					{
+						"Key": "starttime",
+						"Value": {
+							"Ref": "Starttime"
+						}
+					},
+					{
+						"Key": "stoptime",
+						"Value": {
+							"Ref": "Stoptime"
+						}
+					},
+					{
+						"Key": "Project",
+						"Value": {
+							"Ref": "Project"
+						}
+					}
+				],
+				"NetworkInterfaces": [{
+					"DeleteOnTermination": "true",
+					"Description": "Primary network interface",
+					"DeviceIndex": 0,
+					"SubnetId": {
+						"Ref": "SubnetId2"
+					},
+					"GroupSet": [{
+						"Ref": "ServerSecurityGroup2"
+					}]
+				}]
+			}
+		}
+	},
+	"Outputs": {
+		"Ec2Instance1": {
+			"Value": {
+				"Ref": "Ec2Instance1"
+			},
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}-Ec2Instance1"
+				}
+			}
+		},
+		"ServerSecurityGroup1": {
+			"Value": {
+				"Ref": "ServerSecurityGroup1"
+			},
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}-ServerSecurityGroup1"
+				}
+			}
+		},
+		"Ec2Instance2": {
+			"Value": {
+				"Ref": "Ec2Instance2"
+			},
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}-Ec2Instance2"
+				}
+			}
+		},
+		"ServerSecurityGroup2": {
+			"Value": {
+				"Ref": "ServerSecurityGroup2"
+			},
+			"Export": {
+				"Name": {
+					"Fn::Sub": "${AWS::StackName}-ServerSecurityGroup2"
+				}
+			}
+		}
+	}
+}
